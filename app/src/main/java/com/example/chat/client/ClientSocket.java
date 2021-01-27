@@ -24,7 +24,7 @@ public class ClientSocket extends WebSocketClient {
 
     @Override
     public void onOpen(ServerHandshake handshakedata) {
-        Log.d("gsy","clicent onOpen connect");
+        Log.d("wlw","clicent onOpen connect");
     }
 
     @Override
@@ -50,4 +50,5 @@ public class ClientSocket extends WebSocketClient {
     public void onError(Exception ex) {
 
     }
+
 }

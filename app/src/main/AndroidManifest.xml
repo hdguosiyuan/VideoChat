@@ -10,8 +10,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".client.ChatClientActivity"></activity>
-        <activity android:name=".video.ChatServiceActivity" />
+        <activity android:name=".client.ChatClientActivity"
+            android:theme="@style/FullTheme"></activity>
+        <activity android:name=".video.ChatServiceActivity"
+            android:theme="@style/FullTheme"/>
         <activity
             android:name=".camerax.CameraxActivity"
             android:screenOrientation="nosensor"

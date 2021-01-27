@@ -5,8 +5,13 @@ import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
 import android.util.Log;
 
+import com.example.chat.client.ClientSocket;
+import com.example.chatlibrary.FileUtils;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
@@ -23,10 +28,38 @@ public class EncodecPush {
 
     private int KEY_I_FRAME_INTERVAL = 5;
     private int KEY_FRAME_RATE = 10;
+    private int model = -1;
+    private ClientSocket clientSocket;
+    private SocketCallback callback;
 
-    public EncodecPush() {
-        socketUtil = new ServerSocketUtil(new InetSocketAddress(11007));
-        socketUtil.start();
+    public EncodecPush(int model) {
+        this.model = model;
+        initSocket(model);
+    }
+
+    private void initSocket(int model) {
+        if (model == 1){
+            socketUtil = new ServerSocketUtil(new InetSocketAddress(11007));
+            socketUtil.start();
+        }else if(model == 2){
+            try {
+                URI uri = new URI("ws://192.168.1.186:11007");
+                clientSocket = new ClientSocket(uri);
+                clientSocket.connect();
+
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void setSocketCallback(SocketCallback socketCallback){
+        this.callback = socketCallback;
+        if(model == 1){
+            socketUtil.setSocketCallback(callback);
+        }else{
+            clientSocket.setSocketCallback(callback);
+        }
     }
 
     public void initCodec(int width, int height) {
@@ -91,12 +124,30 @@ public class EncodecPush {
             byte[] newBuf = new byte[vps_sps_pps_buf.length + bytes.length];
             System.arraycopy(vps_sps_pps_buf, 0, newBuf, 0, vps_sps_pps_buf.length);
             System.arraycopy(bytes, 0, newBuf, vps_sps_pps_buf.length, bytes.length);
-            socketUtil.sendData(newBuf);
+            sendData(newBuf,model);
         } else {
             final byte[] bytes = new byte[bufferInfo.size];
             bb.get(bytes);
-            socketUtil.sendData(bytes);
+            sendData(bytes,model);
+
         }
+    }
+
+    private void sendData(byte[] data,int model){
+        if (model == 1){
+            socketUtil.sendData(data);
+        }else{
+            if (clientSocket.isOpen()){
+                Log.d("wlw","client send data");
+                clientSocket.send(data);
+            }
+
+        }
+    }
+
+    private void writeToFile(byte[] bytes){
+        FileUtils.writeContent(bytes);
+        FileUtils.writeBytes(bytes);
     }
 }
 

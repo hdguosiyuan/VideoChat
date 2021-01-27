@@ -46,6 +46,7 @@ public class ServerSocketUtil extends WebSocketServer {
 
     @Override
     public void onMessage(WebSocket conn, ByteBuffer message) {
+        Log.d("gsy","onMessage receive from client");
         byte[] data = new byte[message.remaining()];
         message.get(data);
         socketCallback.callBack(data);

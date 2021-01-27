@@ -5,10 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".client.ChatClientActivity">
-    <TextureView
-        android:id="@+id/tv_opposite"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
 
     <androidx.camera.view.PreviewView
         android:id="@+id/pv_self"
@@ -17,6 +13,11 @@
         android:layout_margin="15dp"
         android:layout_width="100dp"
         android:layout_height="150dp"/>
+
+    <TextureView
+        android:id="@+id/tv_opposite"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
     <ImageButton
         android:id="@+id/switch_camera"

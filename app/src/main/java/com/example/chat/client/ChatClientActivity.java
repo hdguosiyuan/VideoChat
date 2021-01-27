@@ -2,6 +2,8 @@ package com.example.chat.client;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.camera.view.PreviewView;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -14,7 +16,10 @@ import android.view.TextureView;
 import android.view.View;
 
 import com.example.chat.R;
+import com.example.chat.video.CameraAnalyzer;
+import com.example.chat.video.EncodecPush;
 import com.example.chat.video.SocketCallback;
+import com.example.chatlibrary.CameraUtil;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -25,9 +30,16 @@ public class ChatClientActivity extends AppCompatActivity implements SocketCallb
 
     @BindView(R.id.tv_opposite)
     TextureView textureView;
+    @BindView(R.id.pv_self)
+    PreviewView pvSelf;
     private DecodecVideo decodecVideo;
     private BlockingQueue<byte[]> blockingQueue;
-    private ClientSocket clientSocket;
+
+
+    private CameraUtil cameraUtil;
+    private CameraAnalyzer cameraAnalyzer;
+
+    private EncodecPush encodecPush;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,14 +50,15 @@ public class ChatClientActivity extends AppCompatActivity implements SocketCallb
     }
 
     private void init() {
-        try {
-            URI uri = new URI("ws://192.168.1.101:11006");
-            clientSocket = new ClientSocket(uri);
-            clientSocket.setSocketCallback(this);
-            clientSocket.connect();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+        encodecPush = new EncodecPush(2);
+        encodecPush.setSocketCallback(this);
+        cameraAnalyzer = new CameraAnalyzer();
+        cameraAnalyzer.setEncodecPush(encodecPush);
+        cameraUtil = new CameraUtil(pvSelf,this);
+
+        cameraUtil.setAnalyzer(cameraAnalyzer);
+        cameraUtil.openCamera();
+
 
         blockingQueue = new LinkedBlockingQueue<>();
         textureView.setSurfaceTextureListener(this);
