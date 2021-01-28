@@ -10,6 +10,8 @@ import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Surface;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 
@@ -24,12 +26,13 @@ public class ChatServiceActivity extends AppCompatActivity implements SocketCall
 
     @BindView(R.id.pv_self)
     PreviewView pvSelf;
-    @BindView(R.id.tv_opposite)
-    TextureView textureView;
+//    @BindView(R.id.tv_opposite)
+//    TextureView textureView;
     private CameraUtil cameraUtil;
     private CameraAnalyzer cameraAnalyzer;
     private EncodecPush encodecPush;
-
+    @BindView(R.id.surfaceview)
+    SurfaceView surfaceView;
     private DecodecVideo decodecVideo;
     private BlockingQueue<byte[]> blockingQueue;
 
@@ -38,6 +41,7 @@ public class ChatServiceActivity extends AppCompatActivity implements SocketCall
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_service);
         ButterKnife.bind(this);
+        pvSelf.bringToFront();
         init();
     }
 
@@ -52,7 +56,25 @@ public class ChatServiceActivity extends AppCompatActivity implements SocketCall
         //cameraAnalyzer.getEncodecPush().initCodec(cameraUtil.getWith(),cameraUtil.getHeight());
 
         blockingQueue = new LinkedBlockingQueue<>();
-        textureView.setSurfaceTextureListener(this);
+        //textureView.setSurfaceTextureListener(this);
+        surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(@NonNull SurfaceHolder holder) {
+                decodecVideo = new DecodecVideo(holder.getSurface(),blockingQueue);
+                decodecVideo.initDecodec();
+                decodecVideo.start();
+            }
+
+            @Override
+            public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
+
+            }
+
+            @Override
+            public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
+
+            }
+        });
     }
 
     public void onClick(View view) {

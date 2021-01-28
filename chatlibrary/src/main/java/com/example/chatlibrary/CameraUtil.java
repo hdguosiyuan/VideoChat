@@ -166,7 +166,7 @@ public class CameraUtil {
         this.analyzer = analyzer;
     }
 
-    private void updateTransform() {
+    public void updateTransform() {
         parent = (ViewGroup) viewFinder.getParent();
         //移除之前的viewFinder,重新添加
         parent.removeView(viewFinder);

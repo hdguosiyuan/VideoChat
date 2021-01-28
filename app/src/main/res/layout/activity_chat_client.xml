@@ -10,12 +10,19 @@
         android:id="@+id/pv_self"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_margin="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="15dp"
         android:layout_width="100dp"
-        android:layout_height="150dp"/>
+        android:layout_height="150dp"
+        android:stateListAnimator="@null"/>
 
-    <TextureView
-        android:id="@+id/tv_opposite"
+<!--    <TextureView-->
+<!--        android:id="@+id/tv_opposite"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"/>-->
+
+    <SurfaceView
+        android:id="@+id/surfaceview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

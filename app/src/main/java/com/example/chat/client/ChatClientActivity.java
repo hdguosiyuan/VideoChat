@@ -12,6 +12,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Surface;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 
@@ -28,10 +30,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class ChatClientActivity extends AppCompatActivity implements SocketCallback, TextureView.SurfaceTextureListener {
 
-    @BindView(R.id.tv_opposite)
-    TextureView textureView;
+//    @BindView(R.id.tv_opposite)
+//    TextureView textureView;
     @BindView(R.id.pv_self)
     PreviewView pvSelf;
+    @BindView(R.id.surfaceview)
+    SurfaceView surfaceView;
+
     private DecodecVideo decodecVideo;
     private BlockingQueue<byte[]> blockingQueue;
 
@@ -46,7 +51,9 @@ public class ChatClientActivity extends AppCompatActivity implements SocketCallb
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_client);
         ButterKnife.bind(this);
+        pvSelf.bringToFront();
         init();
+        startService(null);
     }
 
     private void init() {
@@ -61,7 +68,25 @@ public class ChatClientActivity extends AppCompatActivity implements SocketCallb
 
 
         blockingQueue = new LinkedBlockingQueue<>();
-        textureView.setSurfaceTextureListener(this);
+        //textureView.setSurfaceTextureListener(this);
+        surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(@NonNull SurfaceHolder holder) {
+                decodecVideo = new DecodecVideo(holder.getSurface(),blockingQueue);
+                decodecVideo.initDecodec();
+                decodecVideo.start();
+            }
+
+            @Override
+            public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
+
+            }
+
+            @Override
+            public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
+
+            }
+        });
     }
 
 
