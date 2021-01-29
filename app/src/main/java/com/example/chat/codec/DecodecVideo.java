@@ -1,20 +1,25 @@
-package com.example.chat.client;
+package com.example.chat.codec;
 
 import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.view.Surface;
-import android.view.TextureView;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * 耗时操作放到子线程
+ * 此时为消费者
+ */
 public class DecodecVideo extends Thread{
 
     private MediaCodec mediaCodec;
     private MediaFormat mediaFormat;
     private Surface surface;
     private BlockingQueue<byte[]> blockingQueue;
+
+    private boolean running = true;
 
     public DecodecVideo(Surface surface,BlockingQueue<byte[]> blockingQueue) {
         this.surface = surface;
@@ -37,7 +42,7 @@ public class DecodecVideo extends Thread{
 
     @Override
     public void run() {
-        while (true){
+        while (running){
             try {
                 byte[] data = blockingQueue.take();
                 int index= mediaCodec.dequeueInputBuffer(100000);
@@ -58,5 +63,9 @@ public class DecodecVideo extends Thread{
                 e.printStackTrace();
             }
         }
+    }
+
+    public void close(){
+        running = false;
     }
 }

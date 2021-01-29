@@ -15,7 +15,6 @@ import com.example.chat.util.ImageUtil;
 
 public class CameraAnalyzer implements ImageAnalysis.Analyzer {
 
-    private EncodecPush encodecPush;
     private ReentrantLock lock = new ReentrantLock();
     private byte[] arrayY;
     private byte[] arrayU;
@@ -28,25 +27,19 @@ public class CameraAnalyzer implements ImageAnalysis.Analyzer {
     private byte[] nv21;
     private byte[] nv21_rotated;
 
+    private CameraCallback cameraCallback;
+    private boolean isReady = false;
+
     public CameraAnalyzer() {
 
     }
 
-    public EncodecPush getEncodecPush() {
-        return encodecPush;
+    public void setCameraCallback(CameraCallback cameraCallback){
+        this.cameraCallback = cameraCallback;
     }
-    public void setEncodecPush(EncodecPush encodecPush){
-        this.encodecPush = encodecPush;
-    }
-
-    byte[] nv12;
 
     @Override
     public void analyze(@NonNull ImageProxy image) {
-//        Log.d("gsy", "CameraAnalyzer =" + Thread.currentThread().getName() + "width =" + image.getWidth() + ",height =" + image.getHeight());
-        if (encodecPush == null){
-            return;
-        }
         lock.lock();
         try {
             ImageProxy.PlaneProxy[] planes = image.getPlanes();
@@ -72,17 +65,32 @@ public class CameraAnalyzer implements ImageAnalysis.Analyzer {
                 if (nv21_rotated == null) {
                     nv21_rotated = new byte[realHeight * realWidth * 3 / 2];
                 }
-                if (!encodecPush.isInit()) {
-                    encodecPush.initCodec(realHeight, realWidth);
+                if (!isReady && cameraCallback != null) {
+                    cameraCallback.cameraReady(size);
+                    isReady = true;
                 }
+
                 ImageUtil.yuvToNv21(arrayY, arrayU, arrayV, nv21, realWidth, realHeight);
-                nv21_rotated = ImageUtil.rotateYUV420Degree90(nv21, image.getWidth(), image.getHeight(),90);
+                nv21_rotated = ImageUtil.rotateYUV420Degree90(nv21, image.getWidth(), image.getHeight(), 90);
                 byte[] temp = ImageUtil.nv21ToNv12(nv21_rotated);
-                encodecPush.encodec(temp);
+
+                if (cameraCallback != null) {
+                    cameraCallback.getCameraFrame(temp);
+                }
+
             }
         } finally {
             lock.unlock();
         }
         image.close();
+    }
+
+    /**
+     * getCameraFrame  拍出一帧回调
+     * cameraReady camera打开回调
+     */
+    public interface CameraCallback {
+        void getCameraFrame(byte[] data);
+        void cameraReady(Size size);
     }
 }

@@ -266,4 +266,12 @@ public class CameraUtil {
         bindCameraUseCases();
     }
 
+    /**
+     * 关闭camera
+     */
+    public void stop(){
+        cameraProvider.unbindAll();
+        cameraExecutor.shutdown();
+    }
+
 }

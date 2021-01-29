@@ -27,13 +27,13 @@
 
 
     <ImageButton
-        android:id="@+id/switch_camera"
+        android:id="@+id/hangup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp"
-        android:background="@mipmap/change"
+        android:background="@mipmap/hangup"
         android:onClick="onClick"/>
 
 </RelativeLayout>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".client.ChatClientActivity">
+    tools:context=".video.ChatClientActivity">
 
     <androidx.camera.view.PreviewView
         android:id="@+id/pv_self"
@@ -16,10 +16,6 @@
         android:layout_height="150dp"
         android:stateListAnimator="@null"/>
 
-<!--    <TextureView-->
-<!--        android:id="@+id/tv_opposite"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"/>-->
 
     <SurfaceView
         android:id="@+id/surfaceview"
@@ -27,12 +23,13 @@
         android:layout_height="match_parent"/>
 
     <ImageButton
-        android:id="@+id/switch_camera"
+        android:id="@+id/hangup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp"
-        android:background="@mipmap/change"
+        android:background="@mipmap/hangup"
         android:onClick="onClick"/>
+
 </RelativeLayout>
